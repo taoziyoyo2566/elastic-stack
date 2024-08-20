@@ -1,27 +1,30 @@
 filebeat.inputs:
-- type: filestream
-  id: default-filestream
-  paths:
-    - ingest_data/*.log
-- type: log
-  paths:
-  - /opt/docker/reality/nodeInfo/reality_ZGOUS_9df3641e/log/*.log
+  - type: filestream
+    id: default-filestream
+    paths:
+      - ingest_data/*.log
+  - type: log
+    id: reality-log
+    paths:
+      - reality-log/**/log/*.log
+
 filebeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
-
 processors:
-- add_docker_metadata: ~
-
+  - add_docker_metadata: null
 setup.kibana:
   host: ${KIBANA_HOSTS}
   username: ${ELASTIC_USER}
   password: ${ELASTIC_PASSWORD}
-
 output.elasticsearch:
   hosts: ${ELASTIC_HOSTS}
   username: ${ELASTIC_USER}
   password: ${ELASTIC_PASSWORD}
   ssl.enabled: true
-  ssl.certificate_authorities: "certs/ca/ca.crt"
+  ssl.certificate_authorities: certs/ca/ca.crt
+
+# transfer filebeat t0 logstash
+#output.logstash:
+#  hosts: ["logstash01:5044"]
